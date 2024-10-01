@@ -22,7 +22,7 @@
 
 **1. Настройка проекта.**
 * Создайте новый Maven-проект (или Gradle, если предпочитаете).
-* Добавьте зависимости в `pom.xml` воспользовавшись библиотеками [telegrambots](https://central.sonatype.com/artifact/org.telegram/telegrambots/6.8.0/overview) и [GitHub telegrambots](https://github.com/rubenlagus/TelegramBots/blob/aad139de980ae25ee7a4b06bbe7644c6077421ce/TelegramBots.wiki/Getting-Started.md)
+* Добавьте зависимости в `pom.xml` воспользовавшись библиотеками [Apache HttpClient](https://mvnrepository.com/search?q=Apache+HttpClient), [Jackson Databind](https://mvnrepository.com/search?q=Jackson+Databind), [telegrambots](https://central.sonatype.com/artifact/org.telegram/telegrambots/6.8.0/overview), [GitHub telegrambots](https://github.com/rubenlagus/TelegramBots/blob/aad139de980ae25ee7a4b06bbe7644c6077421ce/TelegramBots.wiki/Getting-Started.md), 
 ```
 <dependencies>
         <dependency>
@@ -147,7 +147,7 @@ String botToken = properties.getProperty("bot.token");
     }
 }
 ```
-* Создаем файл `config.properties` для хранения `nasa.api_key` и `bot.token` и записываем туда ключ Nasa который получили на почту и токен полученный от пользователя Telegram [@BotFather](https://t.me/BotFather). Не забыв добавить файл `config.properties` в `gitignore`
+* Создаем файл `config.properties` для хранения `nasa.api_key` и `bot.token` и записываем туда ключ Nasa который получили на почту и токен полученный от пользователя Telegram [@BotFather](https://t.me/BotFather). Не забыв добавить файл `config.properties` в `.gitignore`
 ```
 nasa.api_key=ключь_Nasa_полученный_на_почту
 bot.token=токен_который_получили_из_Telegram
