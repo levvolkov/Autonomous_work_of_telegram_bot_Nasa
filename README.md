@@ -23,7 +23,7 @@
 **1. Настройка проекта.**
 * Создайте новый Maven-проект (или Gradle, если предпочитаете).
 * Добавьте зависимости в `pom.xml` воспользовавшись библиотеками [Apache HttpClient](https://mvnrepository.com/search?q=Apache+HttpClient), [Jackson Databind](https://mvnrepository.com/search?q=Jackson+Databind), [telegrambots](https://central.sonatype.com/artifact/org.telegram/telegrambots/6.8.0/overview), [GitHub telegrambots](https://github.com/rubenlagus/TelegramBots/blob/aad139de980ae25ee7a4b06bbe7644c6077421ce/TelegramBots.wiki/Getting-Started.md), 
-```
+```java
 <dependencies>
         <dependency>
             <groupId>org.apache.httpcomponents.client5</groupId>
@@ -44,19 +44,19 @@
 ```
 **2. Создадим класс `MyTelegramBot` предназначенный для создания и управления Telegram-ботом, который использует долгий опрос (long polling) для получения обновлений и сообщений. Он инициализирует бота с заданным именем и токеном, а также содержит метод для обработки входящих сообщений от пользователей. В этом классе также используется API NASA для получения изображения дня, которое бот может отправлять в ответ на запросы пользователей. Таким образом, бот может интерактивно взаимодействовать с пользователями, предоставляя им интересный контент.**
 * Объявляем класс `MyTelegramBot`, который наследуется от `TelegramLongPollingBot`. Это нужно для того, чтобы использовать функциональность API Telegram для долгого опроса.
-```
+```java
     public class MyTelegramBot extends TelegramLongPollingBot {
 ```
 
 * Объявление переменных, в которых определяются поля для хранения имени бота, токена и URL для доступа к API NASA. Это необходимо для аутентификации и получения данных для взаимодействия с пользователем.
-```
+```java
     private final String BOT_NAME; 
     private final String BOT_TOKEN; 
     private final String URL;
 ```
 
 * Создадим конструктор, который принимает имя и токен бота. В этом месте происходит инициализация полей и регистрация бота в API Telegram. Это один из важных шагов, так как без регистрации бот не сможет получать обновления.
-```
+```java
    public MyTelegramBot(String BOT_NAME, String BOT_TOKEN, String nasaApiKey) throws TelegramApiException {
         this.BOT_NAME = BOT_NAME;
         this.BOT_TOKEN = BOT_TOKEN;
@@ -67,7 +67,7 @@
 ```
 
 * Метод `onUpdateReceived` вызывается при поступлении новых сообщений. Зазмещаем его сразу после конструктора, поскольку он является основным методом для обработки входящих обновлений. В этом методе я обрабатываю текстовые сообщения и определяю, какое действие выполнять в зависимости от полученной команды.
-```
+```java
  @Override
     public void onUpdateReceived(Update update) {
         if (update.hasMessage() && update.getMessage().hasText()) { 
@@ -78,7 +78,7 @@
 ```
 
 * После того как получили команду, используем конструкцию `switch` для обработки различных действий. Это удобно и делает код более структурированным. Каждая команда имеет свое собственное условие и реализует определенное действие (например, отправку сообщения приветствия или получения изображения).
-```
+```java
 switch (action) { 
                 case "/start":
                     sendMessage("Я бот Наса. Я присылаю картинку дня", chatId); 
@@ -101,7 +101,7 @@ switch (action) {
 ``` 
 
 * Метод `sendMessage` помогает отправлять сообщения в чат. Он создан для избежания дублирования кода и упрощает отправку сообщений. Каждый раз, когда нужно отправить ответ пользователю, просто вызываем этот метод с нужным текстом и идентификатором чата. Так же добавим обработку исключений: `try` мы пытаемся исполнить опасный код, в `catch` мы отлавливаем возможные ошибки. Если во время отправки сообщения произойдет исключение (например, проблемы с сетью или неправильный chatId), будет вызван catch (TelegramApiException e), что позволит программе не завершиться аварийно, `e.printStackTrace();` печатает стек вызовов, что может помочь в диагностике проблемы, поскольку предоставляет информацию об исключении.
-```
+```java
 public void sendMessage(String text, long chatId) {
         SendMessage message = new SendMessage(); 
         message.setChatId(chatId); 
@@ -115,7 +115,7 @@ public void sendMessage(String text, long chatId) {
 ```
 
 * Методы `getBotUsername` и `getBotToken` возвращают имя и токен бота, которые необходимы API Telegram для идентификации вашего бота.
-```
+```java
 @Override
     public String getBotUsername() {
         return BOT_NAME;
@@ -129,18 +129,18 @@ public void sendMessage(String text, long chatId) {
 ```
 **3.Создадим класс приложения `Main`, откуда начинается выполнение программы.**
 * Главный метод программы, который является точкой входа; он принимает массив строковых аргументов и может выбрасывать исключения IOException и TelegramApiException.
-```
+```java
 public static void main(String[] args) throws IOException, TelegramApiException {
 ```
 * Создаём объект Properties для загрузки конфигураций из файла **config.properties** с использованием безопасного потока ввода.
-```
+```java
    Properties properties = new Properties();
         try (FileInputStream input = new FileInputStream("config.properties")) {
             properties.load(input);
         }
 ```
 * Извлекаем значение токена бота из загруженных свойств, используя ключ **nasa.api_key** и токен **bot.token** и создаём новый экземпляр бота, передавая ему имя (**Picture_of_Nasa_bot**) токен и ключ, полученный из конфигурационного файла.
-```
+```java
 String botToken = properties.getProperty("bot.token");
         String nasaApiKey = properties.getProperty("nasa.api_key");
         MyTelegramBot bot = new MyTelegramBot("Picture_of_Nasa_bot", botToken, nasaApiKey);
@@ -148,13 +148,13 @@ String botToken = properties.getProperty("bot.token");
 }
 ```
 * Создаем файл `config.properties` для хранения `nasa.api_key` и `bot.token` и записываем туда ключ Nasa который получили на почту и токен полученный от пользователя Telegram [@BotFather](https://t.me/BotFather). Не забыв добавить файл `config.properties` в `.gitignore`
-```
+```java
 nasa.api_key=ключь_Nasa_полученный_на_почту
 bot.token=токен_который_получили_из_Telegram
 ```
 
 **4. Для того, чтобы связывать класс `NasaAnswer` c json форматом, генерируем конструктор со специальными особенностями.**
-```
+```java
  public NasaAnswer(@JsonProperty("date") String date,
                       @JsonProperty("explanation") String explanation,
                       @JsonProperty("hdurl") String hdurl,
@@ -176,7 +176,7 @@ bot.token=токен_который_получили_из_Telegram
 
 **5. Создадим класс `Utils` с одним статическим методом `getImage`, который получает изображение с указанного URL NASA.**
 * В этом коде реализуется функциональность для выполнения HTTP-запроса к API NASA с целью получения URL изображения. Метод `getImage` принимает строку `nasaUrl`, создаёт HTTP-клиент и использует `ObjectMapper` для парсинга JSON-ответа. Он формирует запрос с помощью `HttpGet` и выполняет его с помощью клиента. Полученный ответ обрабатывается, и URL изображения из поля `url` десериализуется в объект `NasaAnswer`. В результате, метод возвращает этот URL, или пустую строку в случае ошибки.
-```
+```java
 public class Utils {
     public static String getImage(String nasaUrl) { 
         CloseableHttpClient httpclient = HttpClients.createDefault(); 
